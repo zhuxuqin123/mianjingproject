@@ -1,0 +1,44 @@
+<template>
+   <div class="collect-page">
+    <van-nav-bar fixed title="我的收藏" />
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
+      <article-item v-for="(item, i) in list" :key="i" :item="item" />
+    </van-list>
+  </div>
+</template>
+
+<script>
+import { getlikecollectAPI } from '@/API/API'
+export default {
+  name: 'collectPage',
+  data () {
+    return {
+      list: [],
+      loading: false,
+      finished: false,
+      page: 1
+    }
+  },
+  methods: {
+    async  onLoad () {
+      const res = await getlikecollectAPI({ optType: 2, pageSize: 10, page: this.page })
+      console.log(res)
+      this.list.push(...res.data.rows)
+      this.loading = false
+      if (this.page === res.data.pageTotal || !res.data.row.length) {
+        this.finished = true
+      } else {
+        this.page++
+      }
+    }
+  }
+}
+</script>
+
+<style>
+</style>
